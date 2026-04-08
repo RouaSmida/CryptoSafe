@@ -77,6 +77,14 @@ CryptoSafe/
    python -m venv .venv
    source .venv/bin/activate
    ```
+   On Windows PowerShell:
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```
+   On Windows CMD:
+   ```cmd
+   .venv\Scripts\activate.bat
+   ```
 
 3. **Install dependencies**
    ```bash
