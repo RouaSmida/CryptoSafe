@@ -68,7 +68,8 @@ CryptoSafe/
 
 1. **Clone and enter project**
    ```bash
-   cd /home/runner/work/CryptoSafe/CryptoSafe
+   git clone <your-repo-url>
+   cd CryptoSafe
    ```
 
 2. **Create virtual environment (recommended)**

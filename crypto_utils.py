@@ -11,6 +11,7 @@ MAGIC = b"CSF1"
 SALT_SIZE = 16
 NONCE_SIZE = 12
 KEY_SIZE = 32
+# Based on contemporary OWASP password storage guidance for PBKDF2-HMAC-SHA256.
 PBKDF2_ITERATIONS = 390000
 
 
