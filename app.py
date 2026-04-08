@@ -44,8 +44,8 @@ def encrypt():
 
     try:
         encrypted_blob = encrypt_file_content(file_name, data, password)
-    except ValueError:
-        return jsonify({"error": "Encryption failed. Please check your password and file."}), 400
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
     output_name = f"{file_name}.enc"
     return send_file(
@@ -65,8 +65,8 @@ def decrypt():
 
     try:
         original_name, original_data = decrypt_file_content(encrypted_blob, password)
-    except ValueError:
-        return jsonify({"error": "Decryption failed. Wrong password or corrupted file."}), 400
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
     return send_file(
         BytesIO(original_data),

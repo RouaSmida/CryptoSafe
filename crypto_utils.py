@@ -62,8 +62,8 @@ def decrypt_file_content(encrypted_blob: bytes, password: str) -> tuple[str, byt
     key = _derive_key(password, salt)
     try:
         payload = AESGCM(key).decrypt(nonce, ciphertext, None)
-    except Exception as exc:
-        raise ValueError("Decryption failed. Wrong password or corrupted file.") from exc
+    except Exception:
+        raise ValueError("Decryption failed. Wrong password or corrupted file.")
 
     if len(payload) < 2:
         raise ValueError("Decrypted payload is invalid.")
