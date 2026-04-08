@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoSafe – File Encryption &amp; Hashing</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uu0qQLMr/073tFk0i90G+Kz5f5oVFjRWHsXz8mw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>CryptoSafe</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Main content ===== -->
+  <main class="container">
+
+    <!-- Tab navigation -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="encrypt" role="tab" aria-selected="true">
+        <i class="fa-solid fa-lock"></i> Encrypt
+      </button>
+      <button class="tab-btn" data-tab="decrypt" role="tab" aria-selected="false">
+        <i class="fa-solid fa-lock-open"></i> Decrypt
+      </button>
+      <button class="tab-btn" data-tab="hash" role="tab" aria-selected="false">
+        <i class="fa-solid fa-hashtag"></i> Hash
+      </button>
+    </nav>
+
+    <!-- ===== ENCRYPT PANEL ===== -->
+    <section class="panel active" id="panel-encrypt" role="tabpanel">
+      <h2 class="panel-title">
+        <i class="fa-solid fa-lock"></i> File Encryption
+      </h2>
+      <p class="panel-desc">
+        Encrypt any file using <strong>AES-256-GCM</strong>. Your password is used to
+        derive a 256-bit key via PBKDF2-HMAC-SHA256 and is never stored.
+      </p>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="encDropZone">
+        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+        <p>Drag &amp; drop a file here, or <label class="browse-link" for="encFile">browse</label></p>
+        <p class="drop-hint">Any file type · Max 50 MB</p>
+        <input type="file" id="encFile" class="hidden-input" />
+      </div>
+      <div class="file-info hidden" id="encFileInfo">
+        <i class="fa-solid fa-file"></i>
+        <span id="encFileName"></span>
+        <span class="file-size" id="encFileSize"></span>
+        <button class="clear-btn" id="encClearBtn" title="Remove file">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Password field -->
+      <div class="field-group">
+        <label for="encPassword"><i class="fa-solid fa-key"></i> Encryption Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="encPassword" class="text-input"
+                 placeholder="Enter a strong password" autocomplete="new-password" />
+          <button class="toggle-pw" data-target="encPassword" aria-label="Show/hide password">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <div class="strength-bar-wrap">
+          <div class="strength-bar" id="encStrengthBar"></div>
+        </div>
+        <small class="strength-label" id="encStrengthLabel"></small>
+      </div>
+
+      <!-- Progress & action -->
+      <div class="progress-wrap hidden" id="encProgress">
+        <div class="progress-bar" id="encProgressBar"></div>
+      </div>
+      <button class="btn btn-primary" id="encBtn" disabled>
+        <i class="fa-solid fa-lock"></i> Encrypt &amp; Download
+      </button>
+
+      <div class="alert hidden" id="encAlert"></div>
+    </section>
+
+    <!-- ===== DECRYPT PANEL ===== -->
+    <section class="panel" id="panel-decrypt" role="tabpanel">
+      <h2 class="panel-title">
+        <i class="fa-solid fa-lock-open"></i> File Decryption
+      </h2>
+      <p class="panel-desc">
+        Upload a <code>.enc</code> file and provide the original password to restore
+        your file. The correct key is required — wrong keys are rejected.
+      </p>
+
+      <div class="drop-zone" id="decDropZone">
+        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+        <p>Drag &amp; drop an <strong>.enc</strong> file, or <label class="browse-link" for="decFile">browse</label></p>
+        <p class="drop-hint">CryptoSafe encrypted files only</p>
+        <input type="file" id="decFile" class="hidden-input" accept=".enc" />
+      </div>
+      <div class="file-info hidden" id="decFileInfo">
+        <i class="fa-solid fa-file-shield"></i>
+        <span id="decFileName"></span>
+        <span class="file-size" id="decFileSize"></span>
+        <button class="clear-btn" id="decClearBtn" title="Remove file">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="field-group">
+        <label for="decPassword"><i class="fa-solid fa-key"></i> Decryption Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="decPassword" class="text-input"
+                 placeholder="Enter the encryption password" autocomplete="current-password" />
+          <button class="toggle-pw" data-target="decPassword" aria-label="Show/hide password">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="progress-wrap hidden" id="decProgress">
+        <div class="progress-bar" id="decProgressBar"></div>
+      </div>
+      <button class="btn btn-primary" id="decBtn" disabled>
+        <i class="fa-solid fa-lock-open"></i> Decrypt &amp; Download
+      </button>
+
+      <div class="alert hidden" id="decAlert"></div>
+    </section>
+
+    <!-- ===== HASH PANEL ===== -->
+    <section class="panel" id="panel-hash" role="tabpanel">
+      <h2 class="panel-title">
+        <i class="fa-solid fa-hashtag"></i> File Hashing
+      </h2>
+      <p class="panel-desc">
+        Generate a <strong>SHA-256</strong> cryptographic digest of any file.
+        Use it to verify file integrity — even a single-bit change produces a completely
+        different hash.
+      </p>
+
+      <div class="drop-zone" id="hashDropZone">
+        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+        <p>Drag &amp; drop a file here, or <label class="browse-link" for="hashFile">browse</label></p>
+        <p class="drop-hint">Any file type · Max 50 MB</p>
+        <input type="file" id="hashFile" class="hidden-input" />
+      </div>
+      <div class="file-info hidden" id="hashFileInfo">
+        <i class="fa-solid fa-file"></i>
+        <span id="hashFileName"></span>
+        <span class="file-size" id="hashFileSize"></span>
+        <button class="clear-btn" id="hashClearBtn" title="Remove file">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="progress-wrap hidden" id="hashProgress">
+        <div class="progress-bar" id="hashProgressBar"></div>
+      </div>
+      <button class="btn btn-primary" id="hashBtn" disabled>
+        <i class="fa-solid fa-hashtag"></i> Generate Hash
+      </button>
+
+      <!-- Hash result -->
+      <div class="hash-result hidden" id="hashResult">
+        <label class="hash-label">SHA-256 Digest</label>
+        <div class="hash-box">
+          <code id="hashValue"></code>
+          <button class="copy-btn" id="copyBtn" title="Copy to clipboard">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+        <small class="hash-meta" id="hashMeta"></small>
+      </div>
+
+      <div class="alert hidden" id="hashAlert"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <p>
+      CryptoSafe &mdash; AES-256-GCM &bull; SHA-256 &bull; PBKDF2-HMAC-SHA256
+      &bull; Built with Flask &amp; Python <code>cryptography</code>
+    </p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
