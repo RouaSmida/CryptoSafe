@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CryptoSafe - File Encryption, Decryption, Hashing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>CryptoSafe</h1>
+        <p>Secure file encryption, decryption, and SHA-256 hashing</p>
+      </header>
+
+      <section class="card">
+        <h2>Encrypt File</h2>
+        <form id="encryptForm" class="tool-form">
+          <label class="dropzone">
+            <input type="file" name="file" required />
+            <span>Choose file or drag & drop</span>
+          </label>
+          <div class="file-meta" data-meta-for="encryptForm"></div>
+          <input type="password" name="password" placeholder="Enter encryption password" required />
+          <button type="submit">Encrypt & Download</button>
+          <div class="message" data-msg-for="encryptForm"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Decrypt File</h2>
+        <form id="decryptForm" class="tool-form">
+          <label class="dropzone">
+            <input type="file" name="file" required />
+            <span>Upload encrypted file (.enc)</span>
+          </label>
+          <div class="file-meta" data-meta-for="decryptForm"></div>
+          <input type="password" name="password" placeholder="Enter decryption password" required />
+          <button type="submit">Decrypt & Download</button>
+          <div class="message" data-msg-for="decryptForm"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Generate SHA-256 Hash</h2>
+        <form id="hashForm" class="tool-form">
+          <label class="dropzone">
+            <input type="file" name="file" required />
+            <span>Select file for hashing</span>
+          </label>
+          <div class="file-meta" data-meta-for="hashForm"></div>
+          <button type="submit">Generate Hash</button>
+          <div class="hash-output">
+            <input id="hashValue" type="text" readonly placeholder="SHA-256 hash will appear here" />
+            <button type="button" id="copyHashBtn">Copy</button>
+          </div>
+          <div class="message" data-msg-for="hashForm"></div>
+        </form>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
