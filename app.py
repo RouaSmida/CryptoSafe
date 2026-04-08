@@ -4,7 +4,14 @@ from pathlib import Path
 from flask import Flask, jsonify, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
-from crypto_utils import decrypt_file_content, encrypt_file_content, sha256_hash
+from crypto_utils import (
+    MAGIC,
+    NONCE_SIZE,
+    SALT_SIZE,
+    decrypt_file_content,
+    encrypt_file_content,
+    sha256_hash,
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -44,8 +51,8 @@ def encrypt():
 
     try:
         encrypted_blob = encrypt_file_content(file_name, data, password)
-    except ValueError as exc:
-        return jsonify({"error": str(exc)}), 400
+    except ValueError:
+        return jsonify({"error": "Encryption failed. Ensure the password and file name are valid."}), 400
 
     output_name = f"{file_name}.enc"
     return send_file(
@@ -62,11 +69,15 @@ def decrypt():
     _, encrypted_blob, error = _get_file_bytes()
     if error:
         return jsonify({"error": error}), 400
+    if not encrypted_blob.startswith(MAGIC):
+        return jsonify({"error": "Unsupported encrypted file format."}), 400
+    if len(encrypted_blob) < len(MAGIC) + SALT_SIZE + NONCE_SIZE + 16:
+        return jsonify({"error": "Encrypted file is invalid or corrupted."}), 400
 
     try:
         original_name, original_data = decrypt_file_content(encrypted_blob, password)
-    except ValueError as exc:
-        return jsonify({"error": str(exc)}), 400
+    except ValueError:
+        return jsonify({"error": "Decryption failed. Wrong password or corrupted file."}), 400
 
     return send_file(
         BytesIO(original_data),

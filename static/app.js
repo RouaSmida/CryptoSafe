@@ -84,7 +84,7 @@ const handleBinaryForm = (formId, endpoint, fallbackName) => {
       downloadBlob(blob, filename);
       setMessage(formId, "Done. File downloaded successfully.");
     } catch (err) {
-      setMessage(formId, err.message || "An unexpected error occurred.", true);
+      setMessage(formId, err.message || "Unable to process file. Please check your file and try again.", true);
     }
   });
 };
@@ -110,7 +110,7 @@ const setupHashForm = () => {
       hashInput.value = payload.sha256;
       setMessage(formId, `SHA-256 generated for ${payload.fileName}`);
     } catch (err) {
-      setMessage(formId, err.message || "An unexpected error occurred.", true);
+      setMessage(formId, err.message || "Unable to generate hash. Please check your file and try again.", true);
     }
   });
 
