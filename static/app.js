@@ -1,6 +1,6 @@
 const bytesToSize = (bytes) => {
   if (!bytes) return "0 B";
-  const units = ["B", "KB", "MB", "GB"];
+  const units = ["B", "KiB", "MiB", "GiB"];
   const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
   return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
 };
@@ -29,6 +29,14 @@ const downloadBlob = (blob, filename) => {
 };
 
 const extractFilename = (contentDisposition, fallback) => {
+  const encodedMatch = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(contentDisposition || "");
+  if (encodedMatch?.[1]) {
+    try {
+      return decodeURIComponent(encodedMatch[1]);
+    } catch {
+      return fallback;
+    }
+  }
   const match = /filename="([^"]+)"/i.exec(contentDisposition || "");
   return match?.[1] || fallback;
 };

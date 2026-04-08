@@ -73,7 +73,11 @@ def decrypt_file_content(encrypted_blob: bytes, password: str) -> tuple[str, byt
     if len(payload) < name_end:
         raise ValueError("Decrypted payload is incomplete.")
 
-    file_name = payload[2:name_end].decode("utf-8", errors="replace") or "decrypted_file"
+    try:
+        file_name = payload[2:name_end].decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Decrypted file name is invalid or corrupted.") from exc
+    file_name = file_name or "decrypted_file"
     file_content = payload[name_end:]
     return os.path.basename(file_name), file_content
 
