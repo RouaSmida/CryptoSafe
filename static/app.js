@@ -62,8 +62,12 @@ const downloadBlob = (blob, filename) => {
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  // Keep the object URL alive briefly so browsers can finish saving the file.
+  // Immediate revocation can cause intermittent truncated/corrupted downloads.
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 };
 
 const extractFilename = (contentDisposition, fallback) => {
