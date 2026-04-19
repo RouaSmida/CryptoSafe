@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from app import app
+from crypto_utils import encrypt_file_content
 
 
 def _multipart(file_name: str, data: bytes, password: str):
@@ -17,6 +18,9 @@ def test_health_endpoint_reports_limits():
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
+    assert payload["cryptoFormat"]["default"] == "CSF2"
+    assert payload["cryptoFormat"]["legacySupported"] == ["CSF1"]
+    assert payload["cryptoFormat"]["defaultKdf"] == "argon2id"
     assert "rateLimit" in payload
 
 
@@ -92,3 +96,37 @@ def test_api_responses_include_security_headers():
     assert response.headers.get("X-Content-Type-Options") == "nosniff"
     assert response.headers.get("X-Frame-Options") == "DENY"
     assert response.headers.get("Cache-Control") == "no-store"
+
+
+def test_decrypt_endpoint_accepts_legacy_csf1_payload():
+    client = app.test_client()
+    legacy_blob = encrypt_file_content(
+        "legacy.txt", b"legacy-api", "Str0ng!Password#2026", kdf_mode="pbkdf2"
+    )
+
+    dec_response = client.post(
+        "/api/decrypt",
+        data={
+            "password": "Str0ng!Password#2026",
+            "file": (BytesIO(legacy_blob), "legacy.txt.enc"),
+        },
+        content_type="multipart/form-data",
+    )
+
+    assert dec_response.status_code == 200
+    assert dec_response.data == b"legacy-api"
+
+
+def test_decrypt_rejects_unsupported_format_magic():
+    client = app.test_client()
+    response = client.post(
+        "/api/decrypt",
+        data={
+            "password": "Str0ng!Password#2026",
+            "file": (BytesIO(b"NOPE" + b"x" * 40), "bad.enc"),
+        },
+        content_type="multipart/form-data",
+    )
+
+    assert response.status_code == 400
+    assert "invalid or corrupted" in response.get_json()["error"].lower()

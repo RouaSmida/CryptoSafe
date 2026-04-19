@@ -8,11 +8,12 @@ from collections import defaultdict, deque
 from flask import Flask, jsonify, render_template, request, send_file
 
 from crypto_utils import (
-    MAGIC,
-    NONCE_SIZE,
-    SALT_SIZE,
+    DEFAULT_KDF_MODE,
+    MAGIC_V1,
+    MAGIC_V2,
     decrypt_file_content,
     encrypt_file_content,
+    is_supported_encrypted_blob,
     sha256_hash,
 )
 
@@ -131,6 +132,11 @@ def api_health():
             "status": "ok",
             "service": "CryptoSafe",
             "maxUploadBytes": MAX_FILE_SIZE,
+            "cryptoFormat": {
+                "default": MAGIC_V2.decode("ascii"),
+                "legacySupported": [MAGIC_V1.decode("ascii")],
+                "defaultKdf": DEFAULT_KDF_MODE,
+            },
             "rateLimit": {
                 "windowSec": RATE_LIMIT_WINDOW_SEC,
                 "maxRequests": RATE_LIMIT_MAX_REQUESTS,
@@ -171,9 +177,7 @@ def decrypt():
     _, encrypted_blob, error = _get_file_bytes()
     if error:
         return jsonify({"error": error}), 400
-    if not encrypted_blob.startswith(MAGIC):
-        return jsonify({"error": "Unsupported encrypted file format."}), 400
-    if len(encrypted_blob) < len(MAGIC) + SALT_SIZE + NONCE_SIZE + 16:
+    if not is_supported_encrypted_blob(encrypted_blob):
         return jsonify({"error": "Encrypted file is invalid or corrupted."}), 400
 
     try:

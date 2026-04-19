@@ -2,7 +2,7 @@
 
 CryptoSafe is a university-ready cybersecurity web application for:
 
-- File encryption (AES-256, password-based)
+- File encryption (AES-256, password-based, Argon2id by default)
 - File decryption (with correct password)
 - File hashing (SHA-256)
 
@@ -10,7 +10,7 @@ It is built with:
 
 - **Backend:** Python + Flask
 - **Frontend:** HTML, CSS, JavaScript
-- **Crypto library:** `cryptography`
+- **Crypto libraries:** `cryptography` + `argon2-cffi`
 
 ---
 
@@ -37,11 +37,12 @@ It is built with:
 
 ### 1) Symmetric Encryption (AES-256)
 - Uses **AES-GCM** authenticated encryption from `cryptography`.
-- Key is derived from user password using **PBKDF2-HMAC-SHA256** with:
+- Key is derived from user password using **Argon2id** in the current `CSF2` format.
+- Decryption remains backward compatible with legacy `CSF1` payloads that used **PBKDF2-HMAC-SHA256**.
+- Per-file random values include:
   - random 16-byte salt
-  - high iteration count
+   - random 12-byte nonce
   - 32-byte key (256-bit)
-- Each encryption uses a fresh random 12-byte nonce.
 
 ### 2) Hashing (SHA-256)
 - Uses Python `hashlib.sha256` to generate a one-way digest.
@@ -127,7 +128,7 @@ CryptoSafe/
 
 ## Notes for University Submission
 
-- Demonstrates practical cryptography usage (AES-256 + key derivation).
+- Demonstrates practical cryptography usage (AES-256 + modern password KDF).
 - Demonstrates hashing and integrity principles.
 - Demonstrates secure file processing workflow in web apps.
 - Code is modular (`crypto_utils.py`) and frontend/backend are separated.
