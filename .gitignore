@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Keep course submission and presentation files out of version control
+PROJECT_SUBMISSIONS.md
+CryptoSafe_Presentation*

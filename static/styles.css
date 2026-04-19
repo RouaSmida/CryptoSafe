@@ -1,0 +1,289 @@
+:root {
+  color-scheme: dark;
+  --bg: #050505; /* Deep dark background */
+  --card: #0a0e17; /* Darker card background */
+  --text: #e0f2fe; /* Frosty white/blue text */
+  --muted: #64748b;
+  --accent: #00ff41; /* True matrix/neon green */
+  --accent-glow: rgba(0, 255, 65, 0.4);
+  --danger: #ff003c; /* Cyberpunk neon red */
+  --danger-glow: rgba(255, 0, 60, 0.4);
+  --border: #1e293b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace; /* Monospace for terminal feel */
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(circle at 50% -20%, #0f2c1f 0%, transparent 40%),
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px;
+  background-position: 0 0;
+  color: var(--text);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Dynamic Moving Scanline */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 255, 65, 0.02) 51%,
+    transparent 51%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline 10s linear infinite;
+}
+
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+.container {
+  width: min(960px, 92vw);
+  margin: 2rem auto 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.header h1 {
+  margin-bottom: 0.4rem;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
+  animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow); }
+  100% { text-shadow: 0 0 15px var(--accent-glow), 0 0 30px var(--accent-glow), 0 0 40px var(--accent-glow); }
+}
+
+.header p {
+  margin: 0;
+  color: var(--muted);
+  font-family: Inter, Segoe UI, sans-serif;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent));
+  animation: scan-horizontal 3s linear infinite;
+}
+
+@keyframes scan-horizontal {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.tool-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.dropzone.drag-over,
+.dropzone:hover {
+  border-color: var(--accent);
+  background: rgba(0, 255, 65, 0.05);
+  text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.dropzone input[type="file"] {
+  display: block;
+  margin: 0 auto 0.5rem auto;
+  color: var(--muted);
+}
+
+input[type="password"],
+input[type="text"] {
+  background: #020617;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0.8rem;
+  width: 100%;
+  font-family: "Courier New", Courier, monospace;
+  transition: all 0.3s ease;
+}
+
+input[type="password"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow) inset, 0 0 10px var(--accent-glow);
+}
+
+button {
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  background: transparent;
+  color: var(--accent);
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.1) inset;
+}
+
+button:hover {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 20px var(--accent-glow);
+  text-shadow: none;
+}
+
+.message {
+  min-height: 1.2rem;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.message.error {
+  color: var(--danger);
+  text-shadow: 0 0 5px var(--danger-glow);
+}
+
+.message.success {
+  color: var(--accent);
+  text-shadow: 0 0 5px var(--accent-glow);
+}
+
+.file-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.password-meter {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #0b1220;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.password-meter-bar {
+  width: 8%;
+  height: 100%;
+  background: #f59e0b;
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.password-meter-bar[data-strength="weak"] {
+  background: #ef4444;
+}
+
+.password-meter-bar[data-strength="medium"] {
+  background: #f59e0b;
+}
+
+.password-meter-bar[data-strength="strong"] {
+  background: #22c55e;
+}
+
+.password-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.hash-output {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.hash-verify-result {
+  min-height: 1.1rem;
+  font-size: 0.95rem;
+}
+
+.hash-verify-result.ok {
+  color: #86efac;
+}
+
+.hash-verify-result.bad {
+  color: #fca5a5;
+}
+
+@media (max-width: 640px) {
+  .hash-output {
+    grid-template-columns: 1fr;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: #000;
+}
